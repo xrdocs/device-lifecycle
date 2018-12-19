@@ -188,7 +188,7 @@ In the following example we will review the execution of a simple configuration 
 #
 #############################################################################
 
-source ztp_helper.sh
+source /pkg/bin/ztp_helper.sh
 config_file="/tmp/config.txt"
 interfaces=$(xrcmd "show interfaces brief")
 
