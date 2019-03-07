@@ -7,7 +7,7 @@ tags:
   - iosxr
   - cisco
   - linux
-excerpt: small project for network topology vusualization
+excerpt: Small project for network topology vusualization
 ---
 
 ## Foreword
