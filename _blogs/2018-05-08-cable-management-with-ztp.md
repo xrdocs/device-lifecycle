@@ -105,7 +105,7 @@ edge = {
       }
    }
 ```
-##Workflow
+## Workflow
 The python script can be downloaded and executed trough the ZTP process. The script will perform the following tasks:
 
 1. Create a configuration file that enable all the relevant interfaces and activate LLDP
@@ -115,8 +115,39 @@ The python script can be downloaded and executed trough the ZTP process. The scr
 5. Save the graph on the local disk
 6. Export the graph via HTTP POST to a web server
 
+### Creating the configuration file
+This function creates a configuration file based on the list of interfaces that we want to use for neighbors discovery, we can sepcify a type of interface or specific interfaces i.e:
+```python
+LLDP_INTF = ['TenGigE0/0/0/10', 'FortyGigE', 'HundredGigE']
+```
+Once the configuration file is created we apply it to the device using the ztp_helper function "xrapply".
+
+## Creating the graph
+We start by discovering all the neighbors using the "show lldp neighbors" and "show lldp neighbors detail" commands, once all the neighbors are discovered, we populate the node dictionary with the values of the following keys:
+
+1. Id: A sequential number starting with the device itself (id=1)
+2. Label: The hostname of the neighbor with the domain name stripped out
+3. Chassis id: The mac address used to identify the neighbor 
+4. System Description: IOS-XR devices use their PID and SW version
+5. Management IPv4 address: If present
+6. Management IPv6 address: If present
+
+Similarly, the edge dictionary is populated with the values for the folowing keys:
+1. Id: A sequential number
+2. Source: The source node ID which is always 1 since the graph is rooted with the device itself
+3. Target: The target node ID
+4. Label: A 2 lines string with the local interface of the device on top
+5. local Interface
+6. Remote Interface
+7. Title: A 2 lines string with the local interface of the device on top
+
+The remaining key/value pairs in the "attribute" dictionary are not taken from the "show lldp neighbor" output but from the "show controller interface" output and can vary from platform to platform.
+I included the Digital Optical Monitoring (DOM) parameters collected from the "show controller" command. Not all transceivers supports the DOM feature but if supported, it provides a good overview of the quality of the signal received on all the transceiver lanes. It also allows you to monitor the temperature and voltage reported by the transceiver.
+Once all the values for the nodes and edges are poulated , we save the JSON file on the local disk.
+
+
 ## Exporting the graph
-I wanted to export the JSON graph file directly from the device to an apache web server using HTTP POST, apache support PUT and POST if you allow these metodods in the configuration of the virtual server but you still need a way to process the request. I create a simple PHP handler for this purpose. The PHP script simply copy the file to a specified direactory and use the name provided in the HTTP POST form "file_contents". It return the status of the operation in JSON format for easier processing.
+I wanted to export the JSON graph file directly from the device to an apache web server using HTTP POST, Apache supports PUT and POST if you allow these metodods in the configuration of the virtual server but you still need a way to process the request. I create a simple PHP handler for this purpose. The PHP script simply copy the file to a specified direactory and use the name provided in the HTTP POST form "file_contents". It return the status of the operation in JSON format for easier processing by the script.
 
 ```
 <?php
@@ -186,6 +217,3 @@ def encode_multipart_formdata(self, fields, files):
   content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
   return content_type, body
 ```
- 
-
-
