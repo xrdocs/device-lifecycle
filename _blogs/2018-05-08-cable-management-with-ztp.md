@@ -1,8 +1,15 @@
 ---
-published: false
+published: true
 date: '2018-05-08 10:47 -0700'
 title: Cable Management with ZTP
+author: Patrick Warichet
+tags:
+  - iosxr
+  - cisco
+  - linux
+excerpt: small project for network topology vusualization
 ---
+
 ## Foreword
 A while ago I wanted to refresh my knowledge of Python and get familar with JSON data structure. I decided to create a small project to help me verify that all the connections from and to newly inserted devices in my lab were correct and functional. The script in this blog may not be very Pythonesque :) as I was still learning Python but it does the job.
 
