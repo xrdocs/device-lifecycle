@@ -105,7 +105,7 @@ edge = {
       }
    }
 ```
-##Workflow
+## Workflow
 The python script can be downloaded and executed trough the ZTP process. The script will perform the following tasks:
 
 1. Create a configuration file that enable all the relevant interfaces and activate LLDP
@@ -186,6 +186,3 @@ def encode_multipart_formdata(self, fields, files):
   content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
   return content_type, body
 ```
- 
-
-
