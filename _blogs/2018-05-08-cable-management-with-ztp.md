@@ -145,15 +145,13 @@ The remaining key/value pairs in the "attribute" dictionary are not taken from t
 I included the Digital Optical Monitoring (DOM) parameters collected from the "show controller" command. Not all transceivers supports the DOM feature but if supported, it provides a good overview of the quality of the signal received on all the transceiver lanes. It also allows you to monitor the temperature and voltage reported by the transceiver.
 Once all the values for the nodes and edges are poulated , we save the JSON file on the local disk.
 
-
 ## Exporting the graph
-I wanted to export the JSON graph file directly from the device to an apache web server using HTTP POST, Apache supports PUT and POST if you allow these metodods in the configuration of the virtual server but you still need a way to process the request. I create a simple PHP handler for this purpose. The PHP script simply copy the file to a specified direactory and use the name provided in the HTTP POST form "file_contents". It return the status of the operation in JSON format for easier processing by the script.
+I wanted to export the JSON graph file directly from the device to an apache web server using HTTP POST, Apache supports PUT and POST if you allow these metodods in the configuration of the virtual server but you still need a way to process the request. I create a simple PHP handler for this purpose. The PHP script simply copy the file to a specified directory and use the name provided in the HTTP POST form "file_contents". It return the status of the operation in JSON format for easier processing by the script.
 
 ```
 <?php
 $uploaddir = realpath('./datasources') . '/';
 $uploadfile = $uploaddir . basename($_FILES['file_contents']['name']);
-
 	if (move_uploaded_file($_FILES['file_contents']['tmp_name'], $uploadfile)) {
 		$data = array("status"=>"success","output"=>$_FILES);
         echo json_encode($data);
@@ -166,7 +164,7 @@ $uploadfile = $uploaddir . basename($_FILES['file_contents']['name']);
 ?>
 ```
 
-IOS-XR comes standard with urllib, urllib2 and httplib which can be used to perform an HTTP POST request. Unfortunatly neither urllib nor httplib directly support mime type "multipart/form-data", 
+IOS-XR comes standard with urllib, urllib2 and httplib which can be used to perform an HTTP POST request. Unfortunatly neither urllib nor httplib directly support mime type "multipart/form-data" and I had to create 2 functions for this purpose.
 
 ```
 def post_multipart(self, host, selector, fields, files):
@@ -217,3 +215,64 @@ def encode_multipart_formdata(self, fields, files):
   content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
   return content_type, body
 ```
+## Visualizing the graph
+To render the graph correctly, we will need the help of some javascript libraries, I found out that [vis.js](http://visjs.org/) has the capability to import JSON graph created with [Gephi](https://gephi.org/) and has strong support for network graphs. An example of rendering the JSON  graph file is shown below:
+
+```javascript
+var graphJSON = loadJSON("./datasources/lldpNeighbors.json");
+var parserOptions = {
+  edges: {
+    inheritColors: false
+  },
+  nodes: {
+    fixed: true,
+    parseColor: false
+  }
+}
+// parse the gephi file to receive an object
+// containing nodes and edges in vis format.
+var parsed = vis.network.convertGephi(graphJSON, parserOptions);
+
+// provide data in the normal fashion
+var data = {
+  nodes: parsed.nodes,
+  edged: parsed.edges
+};
+// create a network
+var network = new vis.Network(container, data);
+```
+
+I also needed a file browser that supports browsing and selecting server-side files. I found a jQuery plugin at [A Beautiful Site](https://www.abeautifulsite.net/jquery-file-tree) that solved that issue.
+It's an AJAX file browser with server-side connector scripts for JSP, PHP, ASP, and others. The nice thing about this script is that it returns the selected file path as a string and with a bit of manipulation, I built the webapp's file tree with the following script:
+
+```javascript
+$(document).ready(function() {
+  $('#loadFolderTree').fileTree({ 
+    root: '/var/www/html/lldpNeighbors/datasources/',
+    script: './jquery/connectors/jqueryFileTree.php',
+    multiFolder: false },
+    function(file) {
+        jsonFile = file.replace(/^.*[\\\/]/, './datasources/')
+        console.log(jsonFile)
+        loadJSON(jsonFile, redrawAll, function(err) {console.log('error')});
+  });    
+});
+```
+
+Finally I divided the web page in 3 sections: The representation of the graph and a dump of the node and edge content when selected in the graph. Here is breakdown of the 3 sections:
+
+#### The graph
+The screenschot below show the graph with one node selected, note that the neighbor has LLDP enabled on the bundled interface:
+![graph.png]({{site.baseurl}}/images/graph.png)
+
+#### The Node
+When a node is selected the node content section is displayed for that node:
+![node.png]({{site.baseurl}}/images/node.png)
+
+#### The Edge
+When an edge is selected, this section will display the full content of that edge:
+![edge.png]({{site.baseurl}}/images/edge.png)
+
+## Conclusion
+With this example, I was able to go through the process of dynamically creating a data file on the device and export it to an HTTP server. The functions described here can be applied to other scenario where the device being provisioned needs to communicate its topology to a service that will apply specific configuration snipset based on that topology.
+[The complete code is available on github](https://wwwin-github.cisco.com/pwariche/ios-xr-cable-plan). Feel free to send me your comments.
