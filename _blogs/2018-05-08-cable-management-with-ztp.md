@@ -263,7 +263,7 @@ Finally I divided the web page in 3 sections: The representation of the graph an
 
 #### The graph
 The screenschot below show the graph with one node selected, note that the neighbor has LLDP enabled on the bundled interface:
-![graph.png]({{site.baseurl}}/images/graph.png)
+![graph.png](https://github.com/xrdocs/device-lifecycle/images/graph.png)
 
 #### The Node
 When a node is selected the node content section is displayed for that node:
