@@ -1,3 +1,16 @@
+---
+published: true
+date: '2019-03-08 12:38 -0700'
+title: ZTP Workflow Part 1 Planning Ahead
+author: Patrick Warichet
+excerpt: Introduction to IOS-XR ZTP Planning Ahead 
+tags:
+  - iosxr
+  - cisco
+  - linux
+  - ztp
+---
+
 ## Introduction
 ZTP is a powerful framework that allows users to automate device bring up. It was introduced with IOS-XR 6.0 and has since been enhanced with multiple features.
 ZTP consists of a set of scripts launched by the process manager of IOS-XR but executed within the Linux environment of the control plane LXC.
