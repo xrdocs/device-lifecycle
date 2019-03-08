@@ -263,17 +263,14 @@ Finally I divided the web page in 3 sections: The representation of the graph an
 
 #### The graph
 The screenschot below show the graph with one node selected, note that the neighbor has LLDP enabled on the bundled interface:
-![graph.png](https://github.com/xrdocs/device-lifecycle/blob/gh-pages/images/graph.png)
 ![graph.png]({{site.baseurl}}/images/graph.png)
 
 #### The Node
 When a node is selected the node content section is displayed for that node:
-![node.png](https://github.com/xrdocs/device-lifecycle/blob/gh-pages/images/node.png)
 ![graph.png]({{site.baseurl}}/images/node.png)
 
 #### The Edge
 When an edge is selected, this section will display the full content of that edge:
-![edge.png](https://github.com/xrdocs/device-lifecycle/blob/gh-pages/images/edge.png)
 ![graph.png]({{site.baseurl}}/images/edge.png)
 
 ## Conclusion
