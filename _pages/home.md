@@ -25,7 +25,7 @@ author: "Cisco Web Team"
               <p>iPXE is an open source boot firmware.  It is fully backward compatible with PXE but include 
               several enhancement. Let's walkthrough those enhacements together.</p>
             </div>
-            <p><a href="{{ base_path }}/device-lifecycle/tutorials/2016-07-27-ipxe-deep-dive/" 
+            <p><a href="{{ base_path }}/tutorials/2016-07-27-ipxe-deep-dive/" 
                   class="btn ">Check out!</a></p>
         </div>
       </div>
@@ -68,7 +68,7 @@ author: "Cisco Web Team"
               <p>ZTP was designed to perform 2 different operations. First: download and apply an initial configuration.
                  Second: download and execute a shell script.</p>
             </div>
-            <p><a href="{{ base_path }}/device-lifecycle/tutorials//2016-08-26-working-with-ztp/" 
+            <p><a href="{{ base_path }}/tutorials//2016-08-26-working-with-ztp/" 
                   class="btn ">Learn more</a></p>
         </div>
       </div>
