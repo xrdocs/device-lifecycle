@@ -1,4 +1,5 @@
 ---
+
 published: true
 date: '2019-03-10 12:38 -0700'
 title: ZTP Workflow Part 2 The DHCP Server
@@ -10,9 +11,8 @@ tags:
   - linux
   - ztp
 position: hidden
+
 ---
-
-
 
 {% include toc %}
 
