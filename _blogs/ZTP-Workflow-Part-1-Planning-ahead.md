@@ -23,7 +23,7 @@ Access to IOS-XR itself is provided by a series of functions included in a helpe
 
 ZTP was initially developed for the NCS5000 and NCS5500 series but has been extended to support the ASR9K and the NCS540 devices.
 
-The goal of this series of blogs is to go beyond the initial tutorial: [Working with Zero Touch Provisioning](https://github.com/xrdocs/device-lifecycle/blob/gh-pages/_tutorials/2016-08-26-working-with-ztp) and to help users plan their ZTP deployments.
+The goal of this series of blogs is to go beyond the initial tutorial: [Working with Zero Touch Provisioning](https://xrdocs.io/device-lifecycle/tutorials/2016-08-26-working-with-ztp/) and to help users plan their ZTP deployments.
 
 ## Internal Resources
 
