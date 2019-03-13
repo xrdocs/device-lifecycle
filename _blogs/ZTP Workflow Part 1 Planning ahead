@@ -3,12 +3,13 @@ published: true
 date: '2019-03-08 12:38 -0700'
 title: ZTP Workflow Part 1 Planning Ahead
 author: Patrick Warichet
-excerpt: Introduction to IOS-XR ZTP Planning Ahead 
+excerpt: Introduction to IOS-XR ZTP Planning Ahead
 tags:
   - iosxr
   - cisco
   - linux
   - ztp
+position: top
 ---
 
 ## Introduction
