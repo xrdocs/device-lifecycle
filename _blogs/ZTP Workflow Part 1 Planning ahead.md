@@ -11,7 +11,8 @@ tags:
   - ztp
 position: hidden
 ---
-##Introduction
+
+## Introduction
 
 ZTP is a powerful framework that allows users to automate device bring up. It was introduced with IOS-XR 6.0 and has since been enhanced with multiple features.
 ZTP consists of a set of scripts launched by the process manager of IOS-XR but executed within the Linux environment of the control plane LXC.
@@ -24,7 +25,7 @@ ZTP was initially developed for the NCS5000 and NCS5500 series but has been exte
 
 The goal of this series of blogs is to go beyond the initial tutorial: [Working with Zero Touch Provisioning](https://wwwin-github.cisco.com/pages/spnstme/software-management/tutorials/2016-08-26-working-with-ztp/) and to help users plan their ZTP deployments.
 
-##Internal Resources
+## Internal Resources
 
 ZTP is executed within the same process name space as IOS-XR and once started, acquires root privileges within that name space. Since ZTP is root on the system, all file manipulations need to be carefully scoped and risk assessments should be made.
 
@@ -35,7 +36,7 @@ Starting with IOS-XR 6.2.25, the ZTP helper library provides a function that can
 
 In summary, ZTP has total control over the device both at the system level and at the control plane configuration level. ZTP goes beyond the initial configuration of the device. It includes capabilities to manipulate the device file system, install applications, deploy containers and more.
 
-##External Resources
+## External Resources
 
 ZTP requires two external services:
 
