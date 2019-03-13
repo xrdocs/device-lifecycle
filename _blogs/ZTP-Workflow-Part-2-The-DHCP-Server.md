@@ -1,3 +1,19 @@
+---
+published: true
+date: '2019-03-10 12:38 -0700'
+title: ZTP Workflow Part 2 The DHCP Server
+author: Patrick Warichet
+excerpt: Introduction to IOS-XR ZTP: The DHCP Server
+tags:
+  - iosxr
+  - cisco
+  - linux
+  - ztp
+position: hidden
+---
+
+
+
 {% include toc %}
 
 # Introduction
