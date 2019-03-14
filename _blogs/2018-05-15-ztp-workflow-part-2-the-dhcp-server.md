@@ -1,12 +1,20 @@
 ---
-published: false
-date: '2018-05-15 11:11 -0700'
+published: true
+date: '2019-03-14 11:11 -0700'
 title: ZTP Workflow Part 2 The DHCP Server
+author: Patrick Warichet
+tags:
+  - iosxr
+  - cisco
+  - linux
+  - ZTP
 ---
 ## Introduction
 
-The most common way to provide a valid bootfile name (option 67/59) to a device being provisioned is to use the DHCP options. This document lists the relevant option sent by the client and example of usage to provision the device at the DHCP level.
+The most common way to provide a valid bootfile name (option 67/59) to a device being provisioned is to use the DHCP options. This document lists the relevant options sent by the client and example of usage to provision the device at the DHCP level.
+
 The ZTP client of IOS-XR uses the isc-dhclient version 4.3.0 and specific behavior of this client are described in the [ISC document](https://kb.isc.org/article/AA-00333 ) 
+
 The dhcp client send a list of requested option from the server in option 55 (IPv6 option 6) which of course include option 67 (IPv6 option 56) but also include a default gateway, a domain name, a host name and a DNS server(s) list. These options if provided by the server will be used by the client. Version 6.5.1 add IPv4 option 42 on data ports sourced discover.
 
 ### IPv4 example:
@@ -18,6 +26,7 @@ Parameter Request List Item: (15) Domain Name
 Parameter Request List Item: (6) Domain Name Server
 Parameter Request List Item: (12) Host Name
 Parameter Request List Item: (67) Bootfile name
+
 ### IPv6 example:
 Requested Option code: DNS recursive name server (23)
 Requested Option code: Domain Search List (24)
@@ -28,7 +37,8 @@ Requested Option code: Unknown (242)
 Requested Option code: Fully Qualified Domain Name (39)
 
 ## mac-address
-mac-address, the mac address is not an option but the source mac address of the DHCP Discover, for a host declaration it must be matched completely but a partial match on the OUI for example can be used in a class. Partial matching on OUI will take more importance when IOS-XR will be available on different HW vendors. 
+The mac address is not an option but the source mac address of the initial DHCP Discover, for a host declaration it must be matched completely but a partial match on the OUI for example can be used in a class. Partial matching on OUI will take more importance when IOS-XR will be available on different HW vendors.
+
 ### Example1:
 host ncs-5001-b {
       hardware ethernet c4:72:95:a7:ef:c2;
@@ -44,16 +54,17 @@ class “cisco-ncs” {
 }
 pool {
      deny members of "cumulus";
-     deny members of “Juniper”;
-     allow member of “cisco-ncs”;   
+     deny members of "Juniper";
+     allow member of "cisco-ncs";   
      range 192.168.0.30 192.168.0.34;
      option default-url = "http://192.168.0.22/scripts/ncs-generic.sh";
-  }
+}
 
 ## Vendor-Class-Identifier (IPv4: option 60 and 124. IPv6: option 16)
 The PID is part of option vendor-class-identifier (option 60) and the Vendor-Identifying Vendor Class Option (VIVCO) (IPv4 option 124, IPv6 option 16). 
 
 Option 60 is identical in the iPXE and ZTP phases and encodes the following information
+
 ### Example:
 PXEClient:Arch:00009:UNDI:003010:PID:NCS-5508
 
@@ -70,16 +81,20 @@ Option 124: Vendor-Identifying Vendor Class Option (vivco). This option was intr
 3.	Platform PID: The remaining data option field encodes the platform name (NCS-5508 in this example).
 Provisioning using the PID is often used for generic provisioning of the device.
 Using the PID as identifier can be used to install packages and/or apply SMUS that are common to a specific platform or a set of platforms. More specific configuration are added by the downloaded script itself or through other methods than ZTP. 
+
 ### Example1:
+
 ```
 option space cisco-vendor-id-vendor-class code width 1 length width 1;
 option vendor-class.cisco-vendor-id-vendor-class code 9 = {string};
 
-class “NCS-5508” {
-match if (substring(option vendor-class.cisco-vendor-id-vendor-class,19,99) = "NCS-5508")
+class "NCS-5508" {
+   match if (substring(option vendor-class.cisco-vendor-id-vendor-class,19,99) = "NCS-5508")
 }
 ```
+
 ### Example2:
+
 ```
 class "ncs-5001" {
    match if substring (option vendor-class-identifier, 0, 9) = "PXEClient";
@@ -88,7 +103,9 @@ class "ncs-5001" {
       }
  }
  ```
+
 ### Example3:
+
 ```
 option dhcp6.vendor-class code 16 = { integer 32, integer 16, string };
 if substring (option dhcp6.vendor-class, 43, 99) = "NCS-5508" {
@@ -98,12 +115,14 @@ if substring (option dhcp6.vendor-class, 43, 99) = "NCS-5508" {
 
 ## Client-Identifier (IPv4: option 61 and 124, IPv6: option 1)
 The serial number is sent as part of option 67 (client-identifier) and 124(VIVCO), full matching is required on Serial number.
+
 ### Example1:
 ```
 if option dhcp-client-identifier = "FOC1947R143" {
    option bootfile-name = "http://192.168.0.22/scripts/ncs5k-FOC1947R143.sh";
 }
 ```
+
 ### Example2:
 ```
 option space cisco-vendor-id-vendor-class code width 1 length width 1;
@@ -113,8 +132,10 @@ if (substring(option vendor-class.cisco-vendor-id-vendor-class,3,11) = "FGE19471
    filename="http://192.168.0.22/scripts/exhaustive_ztp_script.py";
 }
 ```
+
 ## User-class (IPv4: option 77, IPv6 option 15)
-A very generic provisioning mechanism that works across all Cisco platforms supporting ZTP is simply to  use option 77 (user-class), this option is often used to differentiate between the iPXE phase and ZTP phase.
+A very generic provisioning mechanism that works across all Cisco platforms supporting ZTP is simply to use option 77 (user-class), this option is often used to differentiate between the iPXE phase and ZTP phase.
+
 ### Example1:
 ```
 class “ZTP” {
@@ -134,4 +155,3 @@ class "VLAN10" {
         match if binary-to-ascii(10,16,"",substring(option agent.circuit-id,2,2)) = "10";
 }
 ```
-
