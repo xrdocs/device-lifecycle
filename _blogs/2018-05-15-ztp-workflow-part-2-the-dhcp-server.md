@@ -18,23 +18,25 @@ The ZTP client of IOS-XR uses the isc-dhclient version 4.3.0 and specific behavi
 The dhcp client send a list of requested option from the server in option 55 (IPv6 option 6) which of course include option 67 (IPv6 option 56) but also include a default gateway, a domain name, a host name and a DNS server(s) list. These options if provided by the server will be used by the client. Version 6.5.1 add IPv4 option 42 on data ports sourced discover.
 
 ### IPv4 example:
-Parameter Request List Item: (1) Subnet Mask
-Parameter Request List Item: (28) Broadcast Address
-Parameter Request List Item: (2) Time Offset
-Parameter Request List Item: (3) Router
-Parameter Request List Item: (15) Domain Name
-Parameter Request List Item: (6) Domain Name Server
-Parameter Request List Item: (12) Host Name
-Parameter Request List Item: (67) Bootfile name
+
+* Parameter Request List Item: (1) Subnet Mask
+* Parameter Request List Item: (28) Broadcast Address
+* Parameter Request List Item: (2) Time Offset
+* Parameter Request List Item: (3) Router
+* Parameter Request List Item: (15) Domain Name
+* Parameter Request List Item: (6) Domain Name Server
+* Parameter Request List Item: (12) Host Name
+* Parameter Request List Item: (67) Bootfile name
 
 ### IPv6 example:
-Requested Option code: DNS recursive name server (23)
-Requested Option code: Domain Search List (24)
-Requested Option code: Unknown (243)
-Requested Option code: Unknown (242)
-Requested Option code: Boot File URL (59)
-Requested Option code: Unknown (242)
-Requested Option code: Fully Qualified Domain Name (39)
+
+* Requested Option code: DNS recursive name server (23)
+* Requested Option code: Domain Search List (24)
+* Requested Option code: Unknown (243)
+* Requested Option code: Unknown (242)
+* Requested Option code: Boot File URL (59)
+* Requested Option code: Unknown (242)
+* Requested Option code: Fully Qualified Domain Name (39)
 
 ## mac-address
 The mac address is not an option but the source mac address of the initial DHCP Discover, for a host declaration it must be matched completely but a partial match on the OUI for example can be used in a class. Partial matching on OUI will take more importance when IOS-XR will be available on different HW vendors.
