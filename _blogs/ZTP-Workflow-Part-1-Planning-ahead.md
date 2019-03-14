@@ -48,7 +48,7 @@ Details of the DHCP configuration is covered in part 2 of this series and the HT
 ### DHCP
 
 One of the first actions the ZTP process performs is to acquire an IP address through DHCP (v4/v6). The initial DHCP Discover comes with a set of options that help in the provisioning of the devices. The role of the DHCP server is to provide a valid IP address and a link to a provisioning script or a configuration file that can be downloaded from an HTTP server.
-A full review of the DHCP process with packet captures is detailed in the blog post: [IOS-XR ZTP: Learning through Packet Captures](https://xrdocs.io/device-lifecycle/blogs/2017-09-20-learning-through-packet-captures-ios-xr-ztp/).
+A full review of the DHCP process with packet captures is detailed in the blog post: [IOS-XR ZTP: Learning through Packet Captures](https://xrdocs.io/device-lifecycle/blogs/2017-09-21-ios-xr-ztp-learning-through-packet-captures/).
 Details of the DHCP configuration is covered in part 2 of this series.
 
 ### HTTP
