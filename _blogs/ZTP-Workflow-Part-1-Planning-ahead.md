@@ -56,7 +56,7 @@ Details of the DHCP configuration is covered in part 2 of this series.
 Once a valid link to a URL is obtained from the DHCP Offer, the ZTP script will fork a CURL process to retrieve the file. We allow all options supported by CURL in this request. Details of the HTTP configuration will be covered in part 3 of this series.
 
 ## How to plan for a ZTP deployment
-ZTP can perform all operations that an operator does manually on the system, but in order to automate these operations there are a few criteria that should be considered. Here is a list of important ones:
+ZTP can perform all operations that an operator does manually on the system, but in order to automate these operations, there are a few criteria that should be considered. Here is a list of important ones:
 
 ### Generic and Specific
 Since ZTP can potentially be used on a large set of different type of devices it is important to separate identical tasks that can be applied on these devices from more specific ones.
@@ -95,7 +95,9 @@ Specific configuration generally include:
 * etc.
 
 ### Static and Dynamic
-Static provisioning refers to the configuration of the device based on its attributes. The most commonly used attribute is the device serial number. Other attributes can include the PID of the device, the mac address of the management interface, etc.
+Static provisioning refers to the configuration of the device based on its attributes alone. The most commonly used attribute is the device serial number. Other attributes can include the PID of the device, the mac address of the management interface, etc.
 Static provisioning is the easiest method, but may be harder to maintain if applied to a large set of devices.
 
 Dynamic provisioning refers to the configuration of the device based on its discovered position inside the network. This method will require more processing on the back end and generally includes a database where the relation between devices triggers a configuration snippet to be applied.
+
+With Dynamic provisioning the initial ZTP script will perform several operations on the system (enable netconf, unshut interfaces, configure LLDP, etc.), collect data (link status, LLDP neighbors, etc.), encode this data in a specific format (XML, JSON, etc.) and push this data to the provisioning server, the provisioing server will use this data as keys to create configuration snippets and push these configuration excerpts to the device using netconf for example.  
