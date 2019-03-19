@@ -24,7 +24,7 @@ The information provided in the header can be used in place of the DHCP options.
 ### Example1 Using the HTTP header with PHP
 
 
-```php
+```
 
 <?php
 $headers = apache_request_headers();
