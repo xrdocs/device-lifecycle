@@ -23,9 +23,10 @@ The information provided in the header can be used in place of the DHCP options.
 
 ### Example1 Using the HTTP header with PHP
 
+The following example requires an apache server with PHP installed as a module
+The script parse the different fields of the headers, extract the Platform ID, the serial number and the operation mode and return a script  matching the serial number of the device.
 
 ```
-
 <?php
 $headers = apache_request_headers();
 foreach ($headers as $header => $value) {
