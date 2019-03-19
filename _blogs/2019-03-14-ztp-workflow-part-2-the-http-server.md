@@ -1,7 +1,7 @@
 ---
 published: true
 date: '2019-03-14 14:21 -0700'
-title: ztp-Workflow-part-3-The-HTTP-Server
+title: ZTP Workflow Part 3 The HTTP Server
 author: Patrick Warichet
 excerpt: Part 3 the HTTP server
 tags:
