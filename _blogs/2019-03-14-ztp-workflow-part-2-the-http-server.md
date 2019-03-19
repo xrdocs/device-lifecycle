@@ -23,7 +23,9 @@ The information provided in the header can be used in place of the DHCP options.
 
 ### Example1 Using the HTTP header with PHP
 
+
 ```php
+
 <?php
 $headers = apache_request_headers();
 foreach ($headers as $header => $value) {
@@ -57,7 +59,7 @@ if ($operation == "exr-config" && $serial !== "") {
   die ("Device is not in ZTP mode or device serial number not found");
 }
 ?>
-
+```
 
 
 ## Server Headers
