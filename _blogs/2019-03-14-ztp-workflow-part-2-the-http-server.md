@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 date: '2019-03-14 14:21 -0700'
 title: ztp-workflow-part-2-the-http-server
 author: Patrick Warichet
