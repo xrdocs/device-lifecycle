@@ -2,6 +2,14 @@
 published: false
 date: '2019-03-14 14:21 -0700'
 title: ztp-workflow-part-2-the-http-server
+author: Patrick Warichet
+excerpt: Part 3 the HTTP server
+tags:
+  - iosxr
+  - cisco
+  - linux
+  - ZTP
+  - HTTP
 ---
 ## Introduction
 
