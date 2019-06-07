@@ -24,7 +24,7 @@ If you choose to use Puppet as your configuration platform, it is important to h
 
 ## Puppet in IOS-XR
 Puppetlabs have created a puppet agent for the IOS-XR Yocto based Linux. You can follow their installation instructions here:
-[Installing Cisco IOS-XR agents](https://docs.puppet.com/pe/latest/install_iosxr.html "Installing Cisco IOS-XR agents"). Make sure you download the file which has “cisco-wrlinux-7” in the filename, since this is the version that works in the IOS-XR Yocto Linux environment.
+Installing Cisco IOS-XR agents "Installing Cisco IOS-XR agents"). Make sure you download the file which has “cisco-wrlinux-7” in the filename, since this is the version that works in the IOS-XR Yocto Linux environment.
 
 If you are interested in using Puppet in conjunction with YANG data models, take a look at the tutorial on Puppet and ciscoyang [Using Puppet with IOS-XR 6.1.1](https://xrdocs.github.io/application-hosting/tutorials/2016-08-22-using-puppet-with-iosxr-6-1-1 "Using Puppet with IOS-XR 6.1.1"). You will have to modify the example below to include the installation of the GRPC GEM file.
 
