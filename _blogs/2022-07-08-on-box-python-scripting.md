@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 date: '2022-07-08 16:10 -0500'
 title: On-Box Python Scripting
 tags:
