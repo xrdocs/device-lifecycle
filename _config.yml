@@ -7,14 +7,14 @@
 
 # Site Settings
 locale                   : "en-US"
-title                    : "IOS XR ZTP @xrdocs"
-title_short              : "ZTP"
+title                    : "IOS XR Device Lifecycle @xrdocs"
+title_short              : "Device Lifecycle"
 title_separator          : "|"
 name                     : &name "Cisco Systems Inc"
-description              : &description "Documentation, Blogs and Tutorials on the ZTP, such as RPM management, ZTP & iPXE"
+description              : &description "Documentation, Blogs and Tutorials on the Device Lifecycle, such as RPM management, ZTP & iPXE"
 url                      : "https://xrdocs.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
-baseurl                  : "/ztp" # the subpath of your site, e.g. "/blog"
-gh_repo                  : "https://github.com/xrdocs/ztp"
+baseurl                  : "/device-lifecycle" # the subpath of your site, e.g. "/blog"
+gh_repo                  : "https://github.com/xrdocs/device-lifecycle"
 teaser                   : # filename of teaser fallback teaser image placed in /images/, .e.g. "500x300.png"
 # breadcrumbs            : false # true, false (default)
 words_per_minute         : 200
@@ -282,8 +282,8 @@ tags:
 
 
 prose:
-  siteurl: 'https://xrdocs.io/ztp/'
-  relativeLinks: 'https://xrdocs.io/ztp/links.jsonp'
+  siteurl: 'https://xrdocs.io/device-lifecycle/'
+  relativeLinks: 'https://xrdocs.io/device-lifecycle/links.jsonp'
   media: 'images'
   ignore:
     - index.md

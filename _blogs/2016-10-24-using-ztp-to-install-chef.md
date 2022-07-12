@@ -16,7 +16,7 @@ Chef is an automation platform that "turns infrastructure into code", allowing u
 
 Chef is comprised of a Chef server, one or more workstations, and a number of nodes that are managed by the chef-client installed on each node. You can download the [IOS-XR Chef client package](https://packages.chef.io/stable/ios_xr/6/chef-12.15.19-1.ios_xr6.x86_64.rpm "IOS-XR Chef client package") from Chef and installed directly inside the control plane LXC of IOS-XR.
 
-Chef like Puppet (see my previous blog [Using ZTP to install Puppet](https://xrdocs.github.io/software-management/blogs/2016-10-20-using-ztp-to-install-puppet/ "Using ZTP to install Puppet"))
+Chef like Puppet (see my previous blog [Using ZTP to install Puppet](https://xrdocs.github.io/software-management/blogs/2016-10-20-using-device-lifecycle-to-install-puppet/ "Using ZTP to install Puppet"))
 
 Automated configuration management tools play a vital role in managing complex enterprise infrastructures. Amongst the many advantages, the ones pertinent to IOS-XR and network node in general are:
 
