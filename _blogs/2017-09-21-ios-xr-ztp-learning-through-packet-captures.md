@@ -36,7 +36,7 @@ Zero Touch Provisioning is quite often considered the cornerstone of web scale d
 There are dozens of techniques that vendors have brought forward over the years to enable users to push a configuration down to their devices often using on-premise DHCP servers and encoding the communication with the device within DHCP options. Over the years as devices became natively scriptable, a script of the user's choice may be downloaded to automate provisioning of the entire system (NOS, agents, scripts etc.) on the whole and not just the configuration of the Network OS.    
 
 IOS-XR is no exception and as Patrick's excellent tutorial illustrates: 
-><https://xrdocs.io/device-lifecycle/tutorials/2016-08-26-working-with-ztp/>
+><https://xrdocs.io/ztp/tutorials/2016-08-26-working-with-ztp/>
 
 a lot of headway has been made in enabling IOS-XR to be completely scriptable as soon as it is powered on.
 

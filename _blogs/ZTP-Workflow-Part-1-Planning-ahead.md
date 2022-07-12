@@ -23,7 +23,7 @@ Access to IOS-XR itself is provided by a series of functions included in a helpe
 
 ZTP was initially developed for the NCS5000 and NCS5500 series but has been extended to support the ASR9K and the NCS540 devices.
 
-The goal of this series of blogs is to go beyond the initial tutorial: [Working with Zero Touch Provisioning](https://xrdocs.io/device-lifecycle/tutorials/2016-08-26-working-with-ztp/) and to help users plan their ZTP deployments.
+The goal of this series of blogs is to go beyond the initial tutorial: [Working with Zero Touch Provisioning](https://xrdocs.io/ztp/tutorials/2016-08-26-working-with-ztp/) and to help users plan their ZTP deployments.
 
 ## Internal Resources
 
@@ -48,7 +48,7 @@ Details of the DHCP configuration is covered in part 2 of this series and the HT
 ### DHCP
 
 One of the first actions the ZTP process performs is to acquire an IP address through DHCP (v4/v6). The initial DHCP Discover comes with a set of options that help in the provisioning of the devices. The role of the DHCP server is to provide a valid IP address and a link to a provisioning script or a configuration file that can be downloaded from an HTTP server.
-A full review of the DHCP process with packet captures is detailed in the blog post: [IOS-XR ZTP: Learning through Packet Captures](https://xrdocs.io/device-lifecycle/blogs/2017-09-21-ios-xr-ztp-learning-through-packet-captures/).
+A full review of the DHCP process with packet captures is detailed in the blog post: [IOS-XR ZTP: Learning through Packet Captures](https://xrdocs.io/ztp/blogs/2017-09-21-ios-xr-ztp-learning-through-packet-captures/).
 Details of the DHCP configuration is covered in part 2 of this series.
 
 ### HTTP
