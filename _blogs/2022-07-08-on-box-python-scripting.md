@@ -15,15 +15,16 @@ Being a network engineer no longer requires poring over CLI commands for hours o
 ## Automation Scripts
 Automation scripts are another way to leverage IOS XR to work for you. These are mainly Python scripts that run on-box. These scripts can work in four different ways to aid the configuration and maintenance of your network. 
 
-Config scripts: These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
+**Config scripts**: These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
 
-Exec Scripts: These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
+**Exec Scripts**: These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
 
-EEM Scripts: These are event-driven scripts, and can be configured to run under a variety of conditions, such as a preconfigured timing interval or in response to a system condition. They operate similarly to Exec scripts in that they can aid in configuration or system maintenance. 
+**Process Scripts**: These scripts run continually once manually activated. They perform typical checks and will exit upon a preconfigured condition. They daemonize normal system monitoring.
+
+**EEM Scripts**: These are event-driven scripts, and can be configured to run under a variety of conditions, such as a preconfigured timing interval or in response to a system condition. They operate similarly to Exec scripts in that they can aid in configuration or system maintenance. 
 
 > Note: As of IOS XR release 7.5.1, EEM scripts are not supported
 
-Process Scripts: These scripts run continually once manually activated. They perform typical checks and will exit upon a preconfigured condition. They daemonize normal system monitoring.
 
 ### Using Syslog in Python Scripts
 All types of on-box python scripts have access to the logging capabilities of IOS XR. Using the `cisco.script_mgmt` library, we can import `xrlog`. This allows us to send information to syslog within our scripts, using the `syslog = xrlog.getSysLogger('name_of_script')` function. From here, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information using the `syslog.<level>('message')` syntax.  
