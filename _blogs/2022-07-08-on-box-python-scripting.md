@@ -15,28 +15,40 @@ Being a network engineer no longer requires poring over CLI commands for hours o
 ## Automation Scripts
 Automation scripts are another way to leverage IOS XR to work for you. These are mainly Python scripts that run on-box. These scripts can work in four different ways to aid the configuration and maintenance of your network. 
 
-Config scripts: These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
+**Config scripts**: These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
 
-Exec Scripts: These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
+**Exec Scripts**: These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
 
-EEM Scripts: These are event-driven scripts, and can be configured to run under a variety of conditions, such as a preconfigured timing interval or in response to a system condition. They operate similarly to Exec scripts in that they can aid in configuration or system maintenance. 
+**Process Scripts**: These scripts run continually once manually activated. They perform typical checks and will exit upon a preconfigured condition. They daemonize normal system monitoring.
+
+**EEM Scripts**: These are event-driven scripts, and can be configured to run under a variety of conditions, such as a preconfigured timing interval or in response to a system condition. They operate similarly to Exec scripts in that they can aid in configuration or system maintenance. 
 
 > Note: As of IOS XR release 7.5.1, EEM scripts are not supported
 
-Process Scripts: These scripts run continually once manually activated. They perform typical checks and will exit upon a preconfigured condition. They daemonize normal system monitoring.
 
-### Using Syslog in Pyton Scripts
-All types of on-box python scripts have access to the logging capabilities of IOS XR. Using the `cisco.script_mgmt` library, we can import `xrlog`. This allows us to send information to syslog within our scripts, using the `syslog = xrlog.getSysLogger('name_of_script')` function. From here, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information using the `syslog.<level>('message')` syntax.
-
+### Using Syslog in Python Scripts
+All types of on-box python scripts have access to the logging capabilities of IOS XR. Using the `cisco.script_mgmt` library, we can import `xrlog`. This allows us to send information to syslog within our scripts, using the `syslog = xrlog.getSysLogger('name_of_script')` function. From here, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information using the `syslog.<level>('message')` syntax.  
 
 ## Exec Scripts
 
-Exec scripts represent the most basic on-box scripting available within IOS XR. These scripts provide a way for the network managers to manually deploy programs that simplify their work as a whole, including automating the configuration process. In order to do this, we must leverage the `iosxr.xrcli.xrcli_helper` library. Specifically, exec scripts will commonly use the `xr_apply_config_string(configuration)` function from this library. Being able to commit configurations from inside a python script enables us to streamline many of the repetitive CLI configurations we complete. 
+Exec scripts represent the most basic on-box scripting available within IOS XR. These scripts provide a way for the network managers to manually deploy programs that simplify their work as a whole, including automating the configuration process. In order to do this, we must leverage the `iosxr.xrcli.xrcli_helper` library. Being able to commit configurations from inside a python script enables us to streamline many of the repetitive CLI configurations we complete. Exec scripts will commonly use the `xr_apply_config_string(configuration)` function from this library. This function takes a CLI configuration command as input, and then commits the provided configuration. However, the argument of this function is a *single-line* configuration, meaning we must make use of a few tricks to issue complex configurations.  
+
+Using string formatters allows us to adjust the configuration to a command-line argument or an environment variable:
+```py
+xrcli_helper.xr_apply_config_string("interface %s" %interface_name)
+```
+where `%s` indicates a string insertion.  
+
+A second tool we can use is escape characters. Specfically, the `\n\r` combination will provide similar function to pressing "Enter" while using the CLI. This allows us to dramatically increase the complexity of commands used within this method.
+```py
+xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 \n\r ipv4 address 10.0.0.2 \n\r no shutdown")
+```
+Using a combination of these two techniques enables us to maximize the potential of this function and Exec scripts overall.  
 
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
 
-##### `xr.register_validate_callback(path, callback_function)`
+`xr.register_validate_callback(path, callback_function)`
 
 
 This function is required to be called in each config script. 
@@ -83,4 +95,34 @@ curr_node.set(data_to_set)
 
 Using these methods will allow the commit to pass with the changes.
 
-Full script examples can be found at the xr_python_scripts [GitHub repository](https://github.com/CiscoDevNet/xr-python-scripts)
+### Process Scripts
+Process scripts are the best way for a user to automatically monitor operational data within IOS XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
+
+Process scripts begin with a typical Python `if __name__ == "__main__":` statement. In this statement, there must be an infinite loop (`while(1)`), which can call any necessary helper functions. Many process scripts also utilize the `time` library, which allows the script to wait for a number of seconds (or minutes) at the end of the script before running again. This is helpful in saving power, since script execution is suspended during this time. 
+
+When creating a process script, a common practice is to use a NETCONF RPC to retrieve and edit operational data. We can import `NetconfClient` from the `iosxr.netconf.netconf_lib` in order to access an RPC. All [NETCONF operations](https://en.wikipedia.org/wiki/NETCONF#Operations:~:text=SNMP%20modeling%20language.-,Operations,-%5Bedit%5D) are available with this rpc with the following syntax:
+```py
+nc = NetconfClient(debug=True)
+nc.connect()
+nc.<operation>(file=None, request=None)
+nc.close() #always close the netconf session when you are done
+```
+In order to find the correct piece of data, we should use a string representing an XML filter. The structure of this string is:
+```py
+<container1 xmls="http:cisco.com/ns/yang/Cisco-IOS-XR-{namespace of YANG model}>"
+    <container2>
+        <key-to-container2>KeyData</key-to-container2>
+            <leaf-name/>
+    </container2>
+</container1>
+```
+where the leaf contains the data we wish to monitor/manipulate. This filter string should be passed to the `request` argument of the NETCONF function.
+
+We can use the reply from the operation (`nc.reply`) and details about the filter path to retrieve the desired data from here. The reply will be in XML, so we will have to employ some parsing strategies to extract the specific data. Examples of how to do this can be found in the videos at the end of this section. 
+
+Similarly to the config scripts, we can raise syslog errors (among other options) if operational data doesn't match requirements, or a change in the system has been detected. 
+
+### EEM Scripts
+As EEM scripts are not currently supported, there is no script-writing guide available. 
+
+**Full script examples can be found at the xr_python_scripts [GitHub repository](https://github.com/CiscoDevNet/xr-python-scripts)**
