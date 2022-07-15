@@ -10,11 +10,12 @@ author: Eliot Pickhardt
 excerpt: Automation using python scripts
 ---
 {% include toc %}
-# Programmability of IOS XR
-##### Eliot Pickhardt
+
+# Programmability of IOS XR  
+
 Being a network engineer no longer requires poring over CLI commands for hours on end, ensuring every detail conforms to the requirements, just for a link to break, causing even more work. Using the programmability capabilities of IOS XR, you eliminate much of the tedious router-by-router configuration by manipulating the existing data models automatically. There are many ways to tap into the automated potential of IOS XR, including ZTP, Automation Scripts, and gNMI.
 ## Automation Scripts
-Automation scripts are another way to leverage IOS XR to work for you. These are mainly Python scripts that run on-box. These scripts can work in four different ways to aid the configuration and maintenance of your network. 
+Automation scripts are one way to leverage IOS XR to work for you. These are mainly Python scripts that run on-box. These scripts can work in four different ways to aid the configuration and maintenance of your network. 
 
 **Config scripts**: These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
 
@@ -26,6 +27,7 @@ Automation scripts are another way to leverage IOS XR to work for you. These are
 
 > Note: As of IOS XR release 7.5.1, EEM scripts are not supported
 
+![Screen Shot 2022-07-15 at 2.07.09 PM.png]({{site.baseurl}}/images/Screen Shot 2022-07-15 at 2.07.09 PM.png)
 
 ### Using Syslog in Python Scripts
 All types of on-box python scripts have access to the logging capabilities of IOS XR. Using the `cisco.script_mgmt` library, we can import `xrlog`. This allows us to send information to syslog within our scripts, using the `syslog = xrlog.getSysLogger('name_of_script')` function. From here, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information using the `syslog.<level>('message')` syntax.  
@@ -49,7 +51,7 @@ Using a combination of these two techniques enables us to maximize the potential
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
 
-`xr.register_validate_callback(path, callback_function)`
+##### `xr.register_validate_callback(path, callback_function)`
 
 
 This function is required to be called in each config script. 
@@ -94,7 +96,7 @@ curr_node.set_node("/leaf", data_to_set)
 curr_node.set(data_to_set)
 ```
 
-Using these methods will allow the commit to pass with the changes.
+Using these methods will allow the commit to pass with the changes
 
 ### Process Scripts
 Process scripts are the best way for a user to automatically monitor operational data within IOS XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
