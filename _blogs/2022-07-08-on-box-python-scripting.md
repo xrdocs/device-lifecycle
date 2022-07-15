@@ -42,7 +42,11 @@ syslog.<severity-level>("message")
 
 ## Exec Scripts
 
-Exec scripts represent the most basic on-box scripting available within IOS XR. These scripts provide a way for the network managers to manually deploy programs that simplify their work as a whole, including automating the configuration process. In order to do this, we must leverage the `iosxr.xrcli.xrcli_helper` library. Being able to commit configurations from inside a python script enables us to streamline many of the repetitive CLI configurations we complete. Exec scripts will commonly use the `xr_apply_config_string(configuration)` function from this library. This function takes a CLI configuration command as input, and then commits the provided configuration. However, the argument of this function is a *single-line* configuration, meaning we must make use of a few tricks to issue complex configurations.  
+Exec scripts represent the most basic on-box scripting available within IOS XR. These scripts provide a way for the network managers to manually deploy programs that simplify their work as a whole, including automating the configuration process. In order to do this, we must leverage the `iosxr.xrcli.xrcli_helper` library. 
+
+A simple, but useful, function from this library is `xrcli_exec(command)`. This function takes a command as input and returns the CLI output that you would see if you had just issued this command. 
+
+Being able to commit configurations from inside a python script enables us to streamline many of the repetitive CLI configurations we complete. Thus, exec scripts will commonly use the `xr_apply_config_string(configuration)` function from this library. This function takes a CLI configuration command as input, and then commits the provided configuration. However, the argument of this function is a *single-line* configuration, meaning we must make use of a few tricks to issue complex configurations.  
 
 Using string formatters allows us to adjust the configuration to a command-line argument or an environment variable:
 ```py
@@ -58,59 +62,45 @@ Using a combination of these two techniques enables us to maximize the potential
 
 ### Exec Script Example
 
-The script we'll be dissecting is [`test_ospf_neighbors.py`](https://github.com/CiscoDevNet/xr-python-scripts/blob/main/process/test_ospf_neighbors.py). The goal of this exec script is to streamline the process of building OSPF neighborship between two routers in the same subnet. There is an assumption that one interface on each router is connected. 
+The script we'll be dissecting is [`test_cli_show_version.py`](https://github.com/CiscoDevNet/xr-python-scripts/blob/main/exec/test_cli_show_version.py). This is a relatively simple exec script, issuing a single command and printing its output. 
 
-The first part of the script is the import statements. Since exec scripts are called on the CLI, we want to include the argument parser, as well as the aforementioned Cisco libraries.
+We begin by importing regex operations and aforementioned Cisco libraries:
 
 ```py
-import argparse
+import re
 from iosxr.xrcli.xrcli_helper import *
 from cisco.script_mgmt import xrlog
 ```
 
-Next, we will set up both the CLI Helper and the syslogger:
-
+Then, we instantiate the SysLogger and CliHelper:
 ```py
-syslog = xrlog.getSysLogger('OSPF neighbor configuration')
+syslog = xrlog.getSysLogger('test_cli_show_version')
 helper = XrcliHelper(debug = True)
 ```
 
-This function takes two positional arguments, the OSPF router ID, and the Interface on which neighborship is to be established. On top of these, there are two optional arguments, process ID and area, for each of which we provide default values. We parse these arguments, and store them locally:
+Within our function, we simply issue a command. If the operation was successful, search through the output and print it to syslog, otherwise, we throw an error to syslog:
 
 ```py
-def ospf_neighbors():
-	parser = argparse.ArgumentParser()
-	parser.add_argument("routerid", help = "ip address of router", type = str)
-	parser.add_argument("interface", help = "interface for OSPF configuration", type = str)
-	parser.add_argument("--process", help = "process for OSPF configuration", type = int, default = 100)
-	parser.add_argument("--area", help = "area for OSPF configuration", type = int, default = 0)
-	args = parser.parse_args()
-	router_id = args.routerid
-	interface_name = args.interface
-	process_id = args.process
-	area_id = args.area
-```
+ 	cmd = "show version"
+    result = helper.xrcli_exec(cmd)
+    print(result)
 
-Now, we are able to provide our CLI Helper object with a complex configuration using escape characters and string formatting:
+    if result['status'] == 'success':
+    	syslog.info('SCRIPT : Show version successful')
+        m = re.search(r'[^Version ]*$',result['output'])
+        syslog.info("Script found " + m.group(0))
 
-```py
-result = helper.xr_apply_config_string("router ospf %s \n\r router-id %s \n\r area %s interface %s \n\r network point-to-point" %(process_id, router_id, area_id, interface_name))
-```
-
-We then interpret the output from the helper to decide which syslog message to print:
-
-```py
-	if result['status'] == 'success':
-        syslog.info('SCRIPT : Configuration succeeded')
     else:
-        syslog.error('SCRIPT : Configuration failed')
+        syslog.error('SCRIPT : Show version failed')   
 ```
 
-Finally, we call our function in main:
-```py
-if __name__ == '__main__':
-	ospf_neighbors()
-```
+To hear a similar breakdown from me of the same sciprt, watch this video:
+
+**VIDEOLINK**
+
+I also have a line-by-line breakdown of a more complex exec script available here:
+**VIDEOLINK**
+
 
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
