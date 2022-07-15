@@ -9,6 +9,7 @@ position: hidden
 author: Eliot Pickhardt
 excerpt: Automation using python scripts
 ---
+{% include toc %}
 # Programmability of IOS XR
 ##### Eliot Pickhardt
 Being a network engineer no longer requires poring over CLI commands for hours on end, ensuring every detail conforms to the requirements, just for a link to break, causing even more work. Using the programmability capabilities of IOS XR, you eliminate much of the tedious router-by-router configuration by manipulating the existing data models automatically. There are many ways to tap into the automated potential of IOS XR, including ZTP, Automation Scripts, and gNMI.
