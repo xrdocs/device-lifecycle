@@ -30,7 +30,15 @@ Automation scripts are one way to leverage IOS XR to work for you. These are mai
 ![Screen Shot 2022-07-15 at 2.07.09 PM.png]({{site.baseurl}}/images/Screen Shot 2022-07-15 at 2.07.09 PM.png)
 
 ### Using Syslog in Python Scripts
-All types of on-box python scripts have access to the logging capabilities of IOS XR. Using the `cisco.script_mgmt` library, we can import `xrlog`. This allows us to send information to syslog within our scripts, using the `syslog = xrlog.getSysLogger('name_of_script')` function. From here, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information using the `syslog.<level>('message')` syntax.  
+All types of on-box python scripts have access to the logging capabilities of IOS XR. As script-writers, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information. The following example illustrates how you can leverage system logging within your scripts:
+
+```py
+from cisco.script_mgmt import xrlog
+
+syslog = xrlog.getSysLogger('script-name')
+
+syslog.<severity-level>("message")
+```
 
 ## Exec Scripts
 
@@ -46,7 +54,63 @@ A second tool we can use is escape characters. Specfically, the `\n\r` combinati
 ```py
 xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 \n\r ipv4 address 10.0.0.2 \n\r no shutdown")
 ```
-Using a combination of these two techniques enables us to maximize the potential of this function and Exec scripts overall.  
+Using a combination of these two techniques enables us to maximize the potential of this function and Exec scripts overall.  Let's walk through an example:
+
+### Exec Script Example
+
+The script we'll be dissecting is [`test_ospf_neighbors.py`](https://github.com/CiscoDevNet/xr-python-scripts/blob/main/process/test_ospf_neighbors.py). The goal of this exec script is to streamline the process of building OSPF neighborship between two routers in the same subnet. There is an assumption that one interface on each router is connected. 
+
+The first part of the script is the import statements. Since exec scripts are called on the CLI, we want to include the argument parser, as well as the aforementioned Cisco libraries.
+
+```py
+import argparse
+from iosxr.xrcli.xrcli_helper import *
+from cisco.script_mgmt import xrlog
+```
+
+Next, we will set up both the CLI Helper and the syslogger:
+
+```py
+syslog = xrlog.getSysLogger('OSPF neighbor configuration')
+helper = XrcliHelper(debug = True)
+```
+
+This function takes two positional arguments, the OSPF router ID, and the Interface on which neighborship is to be established. On top of these, there are two optional arguments, process ID and area, for each of which we provide default values. We parse these arguments, and store them locally:
+
+```py
+def ospf_neighbors():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("routerid", help = "ip address of router", type = str)
+	parser.add_argument("interface", help = "interface for OSPF configuration", type = str)
+	parser.add_argument("--process", help = "process for OSPF configuration", type = int, default = 100)
+	parser.add_argument("--area", help = "area for OSPF configuration", type = int, default = 0)
+	args = parser.parse_args()
+	router_id = args.routerid
+	interface_name = args.interface
+	process_id = args.process
+	area_id = args.area
+```
+
+Now, we are able to provide our CLI Helper object with a complex configuration using escape characters and string formatting:
+
+```py
+result = helper.xr_apply_config_string("router ospf %s \n\r router-id %s \n\r area %s interface %s \n\r network point-to-point" %(process_id, router_id, area_id, interface_name))
+```
+
+We then interpret the output from the helper to decide which syslog message to print:
+
+```py
+	if result['status'] == 'success':
+        syslog.info('SCRIPT : Configuration succeeded')
+    else:
+        syslog.error('SCRIPT : Configuration failed')
+```
+
+Finally, we call our function in main:
+```py
+if __name__ == '__main__':
+	ospf_neighbors()
+```
 
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
