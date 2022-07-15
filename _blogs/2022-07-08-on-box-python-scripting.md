@@ -72,7 +72,7 @@ from iosxr.xrcli.xrcli_helper import *
 from cisco.script_mgmt import xrlog
 ```
 
-Then, we instantiate the SysLogger and CliHelper:
+Then, we instantiate the SysLogger and CLI Helper:
 ```py
 syslog = xrlog.getSysLogger('test_cli_show_version')
 helper = XrcliHelper(debug = True)
@@ -81,7 +81,7 @@ helper = XrcliHelper(debug = True)
 Within our function, we simply issue a command. If the operation was successful, search through the output and print it to syslog, otherwise, we throw an error to syslog:
 
 ```py
- 	cmd = "show version"
+ cmd = "show version"
     result = helper.xrcli_exec(cmd)
     print(result)
 
