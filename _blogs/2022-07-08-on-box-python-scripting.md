@@ -140,7 +140,15 @@ As mentioned, config scripts are the best way to ensure that a commit doesn’t 
 
 This function is required to be called in each config script. 
 
-The first argument to this function, `path`, determines when the config script should be run. The script should only be called when a commit related to the script is pushed in order to reduce power usage. The `path` is a YPath from the data model the script uses to check for valid configuration. Specifically,  this argument needs to be a schema path, which is a YPath that doesn’t point to a specific instance of an item. This means that no keys in the path are specified. 
+The first argument to this function, `path`, determines when the config script should be run. The script should only be called when a commit related to the script is pushed in order to reduce power usage. The `path` is a YPath from the data model the script uses to check for valid configuration. Specifically, this argument needs to be a schema path, which is a YPath that doesn’t point to a specific instance of an item. This means that no keys in the path are specified. A schema path conforms to the following format:
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+"module-name:container/container2/another-module:container/leaf"
+</code>
+</pre>
+</div>
 
 There are a number of limitations on the available models that can be used for config scripts. Only XR-native YANG models are supported (no UM, IETF, OC). Also, in order for the callback function to properly access the configuration data, the path needs to be from a “cfg” model, not an “oper” model. 
 
@@ -160,8 +168,17 @@ def cb_fn_name(root):
 
 where `root` is the root node.
 
-This function retrieves specific nodes from the YANG model in order to check configuration status, including containers, leaves, and leaf-lists. In order to do this, we can use either the `<node>.get_node(path)` or `<node>.get_list(path)`. For each of these methods, the path is a specific instance of a YPath, called a data path. Unlike the schema path mentioned in the previous section, the keys of the path must be included to find a specific node or list. Intuitively, `get_node` can be used to get leaf or container nodes, while `get_list` should be used to obtain leaf-list types. 
+This function retrieves specific nodes from the YANG model in order to check configuration status, including containers, leaves, and leaf-lists. In order to do this, we can use either the `<node>.get_node(path)` or `<node>.get_list(path)`. Intuitively, `get_node` can be used to get leaf or container nodes, while `get_list` should be used to obtain leaf-list types. For each of these methods, the path is a specific instance of a YPath, called a data path. Unlike the schema path mentioned in the previous section, the keys of the path must be included to find a specific node or list. A data path has the following signature: 
 
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+"module-name:container/container2<mark>[key='value']</mark>/another-module:container<mark>[key=number]</mark>/leaf"
+</code>
+</pre>
+</div>
+
+The only difference between the data and schema paths is that the required key-value pairs are specified in the data path, while a schema path excludes them.
 
 If the node retrieved is a leaf node, you can use the `.value` attribute to retrieve the associated data. Meanwhile, leaf-lists can be iterated through to get the leaf nodes within them. 
 
@@ -213,7 +230,7 @@ xr.register_validate_callback(["/<mark>ifmgr-cfg</mark>:interface-configurations
 </pre>
 </div>
 
-Naturally, `check_acl` is the callback function that will perform the desired checks on the configuration data. 
+Naturally, `check_acl` is the callback function that will perform the desired examination of the configuration data. 
 
 The first part of this function is to retrieve the interface that is specified by the script:
 <div class="highlighter-rouge">
@@ -225,11 +242,43 @@ if int_config:
 </code>
 </pre>
 </div>
-Essentially, we're using the YPath to see if an interface exists with the specified name. If so, we send an informational message to syslog.
+Essentially, we're using the YPath to see if an interface exists with the specified name. If so, we send an informational message to syslog. An important detail to notice is how the keys, 	`active` and `interface-name` are specified within this YPath.
 
-We then attempt to find the ACL with the name given in the script.
+We then attempt to find the list of ACLs registered under this interface. As you can see, we must use the `get_list` function in place of `get_node`.
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+	acl = int_config.get_list("/ip-pfilter-cfg:ipv4-packet-filter/inbound/acl-name-array")
+    if acl:
+    	syslog.info("ACL list found")
+</code>
+</pre>
+</div>
 
+Finally, we iterate through the list of nodes to see if there is an ACL within the list with the provided name. 
 
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+		if acl_name in [x.value for x in acl]:
+			syslog.info("ACL found")
+		else:
+			syslog.error("ACL not found")
+</code>
+</pre>
+</div>
+
+Normal list iteration is effective for node lists, and we can access the `value` attribute of the nodes.
+
+I dissect this script in a video here:
+
+**VIDEOLINK**
+
+This script helped to illustrate some of the methods that config scripts utilize, but is limited in practicality. I created another sample config script that demonstrates more of the capabilites of config scripts. I discuss the guts of that script in this video:
+
+**VIDEOLINK**
+  
+  
 ## Process Scripts
   
 Process scripts are the best way for a user to automatically monitor operational data within IOS XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
