@@ -69,7 +69,7 @@ A second tool we can use is escape characters. Specfically, the `\n\r` combinati
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 \n\r ipv4 address 10.0.0.2 \n\r no shutdown")
+xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 <mark>\n\r</mark> ipv4 address 10.0.0.2 <mark>\n\r</mark> no shutdown")
 </code>
 </pre>
 </div>
@@ -207,7 +207,7 @@ With config scripts, it's most logical to start with the callback validation fun
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-xr.register_validate_callback(["/ifmgr-cfg:interface-configurations/ifmgr-cfg:interface-configuration/ip-pfilter-cfg:ipv4-packet-filter/*"], check_acl)
+xr.register_validate_callback(["/<mark>ifmgr-cfg</mark>:interface-configurations/ifmgr-cfg:interface-configuration/<mark>ip-pfilter-cfg</mark>:ipv4-packet-filter/*"], check_acl)
 </code>
 </pre>
 </div>
@@ -225,7 +225,7 @@ When creating a process script, a common practice is to use a NETCONF RPC to ret
 <code>
 nc = NetconfClient(debug=True)
 nc.connect()
-nc.{operation}(file=None, request=None)
+<mark>nc.{operation}(file=None, request=None)</mark>
 nc.close() #always close the netconf session when you are done
 </code>
 </pre>
