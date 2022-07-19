@@ -109,16 +109,16 @@ Within our function, we simply issue a command. If the operation was successful,
 <pre class="highlight">
 <code>
  cmd = "show version"
-    result = helper.xrcli_exec(cmd)
-    print(result)
+ result = helper.xrcli_exec(cmd)
+ print(result)
 
-    if result['status'] == 'success':
-    	syslog.info('SCRIPT : Show version successful')
-        m = re.search(r'[^Version ]*$',result['output'])
-        syslog.info("Script found " + m.group(0))
+ if result['status'] == 'success':
+    syslog.info('SCRIPT : Show version successful')
+    m = re.search(r'[^Version ]*$',result['output'])
+    syslog.info("Script found " + m.group(0))
 
-    else:
-        syslog.error('SCRIPT : Show version failed')   
+ else:
+    syslog.error('SCRIPT : Show version failed')   
 </code>
 </pre>
 </div>
@@ -203,7 +203,7 @@ Using these methods will allow the commit to pass with the changes made by the s
 
 Let's take a look at an application of these techniques with a simple script. This specific program will check to see if a specified ACL is present on a given interface when any ACL-related configuration is pushed. 
 
-With config scripts, it's most logical to start with the callback validation funciton, which for this example, uses two different models: an [interface-configuration](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ifmgr-cfg.yang) model along with a [pfilter](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ip-pfilter-cfg.yang) model.
+With config scripts, it's most logical to start with the callback validation funciton, which for this example, uses two different models: an [interface-configuration](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ifmgr-cfg.yang) model along with a [pfilter](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ip-pfilter-cfg.yang) model. This function ensures that if a configuration is pushed that regards the ACL or any of the child nodes, this script will be called. 
 
 <div class="highlighter-rouge">
 <pre class="highlight">
@@ -213,8 +213,21 @@ xr.register_validate_callback(["/<mark>ifmgr-cfg</mark>:interface-configurations
 </pre>
 </div>
 
-Naturally, `check_acl` is the callback function that will perform the desired checks 
+Naturally, `check_acl` is the callback function that will perform the desired checks on the configuration data. 
 
+The first part of this function is to retrieve the interface that is specified by the script:
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+int_config = root.get_node("/ifmgr-cfg:interface-configurations/interface-configuration[active='act',interface-name='%s']" %interface_name)
+if int_config:
+	syslog.info("Interface found")
+</code>
+</pre>
+</div>
+Essentially, we're using the YPath to see if an interface exists with the specified name. If so, we send an informational message to syslog.
+
+We then attempt to find the ACL with the name given in the script.
 
 
 ## Process Scripts
