@@ -39,7 +39,7 @@ from cisco.script_mgmt import xrlog
 
 syslog = xrlog.getSysLogger('script-name')
 
-syslog.{severity-level}("message")
+<mark>syslog.{severity-level}("message")</mark>
 </code>
 </pre>
 </div>
