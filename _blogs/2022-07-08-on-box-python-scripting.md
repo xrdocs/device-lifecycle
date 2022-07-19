@@ -29,16 +29,20 @@ Automation scripts are one way to leverage IOS XR to work for you. These are mai
 
 ![Screen Shot 2022-07-15 at 2.07.09 PM.png]({{site.baseurl}}/images/Screen Shot 2022-07-15 at 2.07.09 PM.png)
 
-### Using Syslog in Python Scripts
+#### Using Syslog in Python Scripts
 All types of on-box python scripts have access to the logging capabilities of IOS XR. As script-writers, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information. The following example illustrates how you can leverage system logging within your scripts:
 
-```py
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 from cisco.script_mgmt import xrlog
 
 syslog = xrlog.getSysLogger('script-name')
 
-syslog.<severity-level>("message")
-```
+syslog.{severity-level}("message")
+</code>
+</pre>
+</div>
 
 ## Exec Scripts
 
@@ -49,38 +53,60 @@ A simple, but useful, function from this library is `xrcli_exec(command)`. This 
 Being able to commit configurations from inside a python script enables us to streamline many of the repetitive CLI configurations we complete. Thus, exec scripts will commonly use the `xr_apply_config_string(configuration)` function from this library. This function takes a CLI configuration command as input, and then commits the provided configuration. However, the argument of this function is a *single-line* configuration, meaning we must make use of a few tricks to issue complex configurations.  
 
 Using string formatters allows us to adjust the configuration to a command-line argument or an environment variable:
-```py
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 xrcli_helper.xr_apply_config_string("interface %s" %interface_name)
-```
+</code>
+</pre>
+</div>
+  
 where `%s` indicates a string insertion.  
 
 A second tool we can use is escape characters. Specfically, the `\n\r` combination will provide similar function to pressing "Enter" while using the CLI. This allows us to dramatically increase the complexity of commands used within this method.
-```py
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 \n\r ipv4 address 10.0.0.2 \n\r no shutdown")
-```
+</code>
+</pre>
+</div>
+  
 Using a combination of these two techniques enables us to maximize the potential of this function and Exec scripts overall.  Let's walk through an example:
 
-### Exec Script Example
+#### Exec Script Example
 
 The script we'll be dissecting is [`test_cli_show_version.py`](https://github.com/CiscoDevNet/xr-python-scripts/blob/main/exec/test_cli_show_version.py). This is a relatively simple exec script, issuing a single command and printing its output. 
 
 We begin by importing regex operations and aforementioned Cisco libraries:
 
-```py
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 import re
 from iosxr.xrcli.xrcli_helper import *
 from cisco.script_mgmt import xrlog
-```
+</code>
+</pre>
+</div>
 
 Then, we instantiate the SysLogger and CLI Helper:
-```py
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 syslog = xrlog.getSysLogger('test_cli_show_version')
 helper = XrcliHelper(debug = True)
-```
+</code>
+</pre>
+</div>
 
 Within our function, we simply issue a command. If the operation was successful, search through the output and print it to syslog, otherwise, we throw an error to syslog:
 
-```py
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
  cmd = "show version"
     result = helper.xrcli_exec(cmd)
     print(result)
@@ -92,20 +118,23 @@ Within our function, we simply issue a command. If the operation was successful,
 
     else:
         syslog.error('SCRIPT : Show version failed')   
-```
+</code>
+</pre>
+</div>
 
-To hear a similar breakdown from me of the same sciprt, watch this video:
+To hear a similar breakdown from me of the same script, watch this video:
 
 **VIDEOLINK**
 
-I also have a line-by-line breakdown of a more complex exec script available here:
+I also have a line-by-line breakdown of a more complex exec script available here, which initiates OSPF neighborship between routers on the same subnet:
+
 **VIDEOLINK**
 
 
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
 
-##### `xr.register_validate_callback(path, callback_function)`
+#### `xr.register_validate_callback(path, callback_function)`
 
 
 This function is required to be called in each config script. 
@@ -116,12 +145,17 @@ There are a number of limitations on the available models that can be used for c
 
 The second argument to this method, `callback_function`, is what will be run whenever a relevant commit is pushed to the configuration.
 
-##### `callback_function`
+#### `callback_function`
 The callback function is the “meat” of the config script. The signature of the function needs to be:
-```py
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 def cb_fn_name(root):
     #function goes here
-```
+</code>
+</pre>
+</div>
 
 where `root` is the root node.
 
@@ -132,39 +166,73 @@ If the node retrieved is a leaf node, you can use the `.value` attribute to retr
 
 After the relevant data has been retrieved from the models, the necessary validation can occur. In this stage, you can send messages to the syslog, as well as having a few options to take with configurations that don’t comply with the desired standards. The first route to take is to generate warnings in the syslog.
 
-```py
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 syslog.warning("Something is wrong!")
-```
+</code>
+</pre>
+</div>
 
 Next, you can block the commit by generating errors from the xr library. This will also send a custom error message to the user. 
 
-```py
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 xr.add_error(curr_node, "Something is wrong! Can't commit changes")
-```
+</code>
+</pre>
+</div>
 
 Finally, you can change configuration data automatically using the `curr_node.set_node(path, data)` or `curr_node.set(data)` methods. The former allows you to set the data of the current node or any child node relative to the current node, while the latter works for the current node only. 
 
-```py
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 curr_node.set_node("/leaf", data_to_set)
 
 curr_node.set(data_to_set)
-```
+</code>
+</pre>
+</div>
 
-Using these methods will allow the commit to pass with the changes
+Using these methods will allow the commit to pass with the changes made by the script.
 
-### Process Scripts
+#### Config Script Example
+
+Let's take a look at an application of these techniques with a simple script. This specific program will check to see if a specified ACL is present on a given interface when any ACL-related configuration is pushed. 
+
+With config scripts, it's most logical to start with the callback validation funciton, which for this example, uses two different models: an [interface-configuration](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ifmgr-cfg.yang) model along with a [pfilter](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ip-pfilter-cfg.yang) model.
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+xr.register_validate_callback(["/ifmgr-cfg:interface-configurations/ifmgr-cfg:interface-configuration/ip-pfilter-cfg:ipv4-packet-filter/*"], check_acl)
+</code>
+</pre>
+</div>
+
+Naturally, `check_acl` is the callback function that will perform
+## Process Scripts
 Process scripts are the best way for a user to automatically monitor operational data within IOS XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
 
 Process scripts begin with a typical Python `if __name__ == "__main__":` statement. In this statement, there must be an infinite loop (`while(1)`), which can call any necessary helper functions. Many process scripts also utilize the `time` library, which allows the script to wait for a number of seconds (or minutes) at the end of the script before running again. This is helpful in saving power, since script execution is suspended during this time. 
 
 When creating a process script, a common practice is to use a NETCONF RPC to retrieve and edit operational data. We can import `NetconfClient` from the `iosxr.netconf.netconf_lib` in order to access an RPC. All [NETCONF operations](https://en.wikipedia.org/wiki/NETCONF#Operations:~:text=SNMP%20modeling%20language.-,Operations,-%5Bedit%5D) are available with this rpc with the following syntax:
-```py
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
 nc = NetconfClient(debug=True)
 nc.connect()
-nc.<operation>(file=None, request=None)
+nc.{operation}(file=None, request=None)
 nc.close() #always close the netconf session when you are done
-```
+</code>
+</pre>
+</div>
+
 In order to find the correct piece of data, we should use a string representing an XML filter. The structure of this string is:
+
 ```py
 <container1 xmls="http:cisco.com/ns/yang/Cisco-IOS-XR-{namespace of YANG model}>"
     <container2>
@@ -173,13 +241,14 @@ In order to find the correct piece of data, we should use a string representing 
     </container2>
 </container1>
 ```
+
 where the leaf contains the data we wish to monitor/manipulate. This filter string should be passed to the `request` argument of the NETCONF function.
 
 We can use the reply from the operation (`nc.reply`) and details about the filter path to retrieve the desired data from here. The reply will be in XML, so we will have to employ some parsing strategies to extract the specific data. Examples of how to do this can be found in the videos at the end of this section. 
 
 Similarly to the config scripts, we can raise syslog errors (among other options) if operational data doesn't match requirements, or a change in the system has been detected. 
 
-### EEM Scripts
+## EEM Scripts
 As EEM scripts are not currently supported, there is no script-writing guide available. 
 
 **Full script examples can be found at the xr_python_scripts [GitHub repository](https://github.com/CiscoDevNet/xr-python-scripts)**
