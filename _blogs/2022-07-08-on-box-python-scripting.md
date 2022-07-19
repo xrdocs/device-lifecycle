@@ -50,6 +50,7 @@ Exec scripts represent the most basic on-box scripting available within IOS XR. 
 
 A simple, but useful, function from this library is `xrcli_exec(command)`. This function takes a command as input and returns the CLI output that you would see if you had just issued this command. 
 
+#### Manipulating String Arguments to Enable Complex Configurations
 Being able to commit configurations from inside a python script enables us to streamline many of the repetitive CLI configurations we complete. Thus, exec scripts will commonly use the `xr_apply_config_string(configuration)` function from this library. This function takes a CLI configuration command as input, and then commits the provided configuration. However, the argument of this function is a *single-line* configuration, meaning we must make use of a few tricks to issue complex configurations.  
 
 Using string formatters allows us to adjust the configuration to a command-line argument or an environment variable:
@@ -57,7 +58,7 @@ Using string formatters allows us to adjust the configuration to a command-line 
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-xrcli_helper.xr_apply_config_string("interface %s" %interface_name)
+xrcli_helper.xr_apply_config_string("interface <mark>%s"</mark> %interface_name)
 </code>
 </pre>
 </div>
@@ -69,7 +70,7 @@ A second tool we can use is escape characters. Specfically, the `\n\r` combinati
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 \n\r ipv4 address 10.0.0.2 \n\r no shutdown")
+xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 <mark>\n\r</mark> ipv4 address 10.0.0.2 <mark>\n\r</mark> no shutdown")
 </code>
 </pre>
 </div>
@@ -212,11 +213,12 @@ xr.register_validate_callback(["/<mark>ifmgr-cfg</mark>:interface-configurations
 </pre>
 </div>
 
-Naturally, `check_acl` is the callback function that will perform
+Naturally, `check_acl` is the callback function that will perform the desired checks 
 
 
 
 ## Process Scripts
+  
 Process scripts are the best way for a user to automatically monitor operational data within IOS XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
 
 Process scripts begin with a typical Python `if __name__ == "__main__":` statement. In this statement, there must be an infinite loop, which can call any necessary helper functions. Many process scripts also utilize the `time` library, which allows the script to wait for a number of seconds (or minutes) at the end of the script before running again. This is helpful in saving power, since script execution is suspended during this time. 
