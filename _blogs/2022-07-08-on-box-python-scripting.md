@@ -69,7 +69,7 @@ A second tool we can use is escape characters. Specfically, the `\n\r` combinati
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 <mark>\n\r</mark> ipv4 address 10.0.0.2 <mark>\n\r</mark> no shutdown")
+xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 \n\r ipv4 address 10.0.0.2 \n\r no shutdown")
 </code>
 </pre>
 </div>
@@ -213,10 +213,13 @@ xr.register_validate_callback(["/<mark>ifmgr-cfg</mark>:interface-configurations
 </div>
 
 Naturally, `check_acl` is the callback function that will perform
+
+
+
 ## Process Scripts
 Process scripts are the best way for a user to automatically monitor operational data within IOS XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
 
-Process scripts begin with a typical Python `if __name__ == "__main__":` statement. In this statement, there must be an infinite loop (`while(1)`), which can call any necessary helper functions. Many process scripts also utilize the `time` library, which allows the script to wait for a number of seconds (or minutes) at the end of the script before running again. This is helpful in saving power, since script execution is suspended during this time. 
+Process scripts begin with a typical Python `if __name__ == "__main__":` statement. In this statement, there must be an infinite loop, which can call any necessary helper functions. Many process scripts also utilize the `time` library, which allows the script to wait for a number of seconds (or minutes) at the end of the script before running again. This is helpful in saving power, since script execution is suspended during this time. 
 
 When creating a process script, a common practice is to use a NETCONF RPC to retrieve and edit operational data. We can import `NetconfClient` from the `iosxr.netconf.netconf_lib` in order to access an RPC. All [NETCONF operations](https://en.wikipedia.org/wiki/NETCONF#Operations:~:text=SNMP%20modeling%20language.-,Operations,-%5Bedit%5D) are available with this rpc with the following syntax:
 
