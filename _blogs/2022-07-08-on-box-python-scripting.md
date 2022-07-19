@@ -1,7 +1,7 @@
 ---
 published: true
 date: '2022-07-08 16:10 -0500'
-title: On-Box Python Scripting
+title: An On-Box Python Scripting Guide
 tags:
   - iosxr
   - cisco
