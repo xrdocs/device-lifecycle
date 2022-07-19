@@ -58,7 +58,7 @@ Using string formatters allows us to adjust the configuration to a command-line 
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-xrcli_helper.xr_apply_config_string("interface <mark>%s"</mark> %interface_name)
+xrcli_helper.xr_apply_config_string("interface <mark>%s</mark>" %interface_name)
 </code>
 </pre>
 </div>
