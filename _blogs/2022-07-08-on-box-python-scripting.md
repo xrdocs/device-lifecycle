@@ -30,7 +30,7 @@ Automation scripts are one way to leverage IOS XR to work for you. These are mai
 
 ![Screen Shot 2022-07-15 at 2.07.09 PM.png]({{site.baseurl}}/images/Screen Shot 2022-07-15 at 2.07.09 PM.png)
 
-#### Using Syslog in Python Scripts
+### Using Syslog in Python Scripts
 All types of on-box python scripts have access to the logging capabilities of IOS XR. As script-writers, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information. The following example illustrates how you can leverage system logging within your scripts:
 
 <div class="highlighter-rouge">
@@ -51,7 +51,7 @@ Exec scripts represent the most basic on-box scripting available within IOS XR. 
 
 A simple, but useful, function from this library is `xrcli_exec(command)`. This function takes a command as input and returns the CLI output that you would see if you had just issued this command. 
 
-#### Manipulating String Arguments to Enable Complex Configurations
+### Manipulating String Arguments to Enable Complex Configurations
 Being able to commit configurations from inside a python script enables us to streamline many of the repetitive CLI configurations we complete. Thus, exec scripts will commonly use the `xr_apply_config_string(configuration)` function from this library. This function takes a CLI configuration command as input, and then commits the provided configuration. However, the argument of this function is a *single-line* configuration, meaning we must make use of a few tricks to issue complex configurations.  
 
 Using string formatters allows us to adjust the configuration to a command-line argument or an environment variable:
@@ -78,7 +78,7 @@ xrcli_helper.xr_apply_config_string("interface TenGigE0/0/0/1 <mark>\n\r</mark> 
   
 Using a combination of these two techniques enables us to maximize the potential of this function and Exec scripts overall.  Let's walk through an example:
 
-#### Exec Script Example
+### Exec Script Example
 
 The script we'll be dissecting is [`test_cli_show_version.py`](https://github.com/CiscoDevNet/xr-python-scripts/blob/main/exec/test_cli_show_version.py). This is a relatively simple exec script, issuing a single command and printing its output. 
 
@@ -144,7 +144,7 @@ import cisco.config_validation as xr
 </pre>
 </div>
 
-#### Registering the Callback Function on a Path
+### Registering the Callback Function on a Path
 
 The `cisco.config-valiation` Python library contains a few functions that are critical to the operation of config scripts. The first of these methods has the following signature:
 
@@ -183,7 +183,7 @@ There are a number of limitations on the available models that can be used for c
 
 The second argument to this method, `callback_function`, is what will be run whenever a relevant commit is pushed to the configuration. The callback function is the “meat” of the config script. 
 
-#### The Callback Function
+### The Callback Function
 
 The signature of the function needs to be:
 
@@ -252,7 +252,7 @@ curr_node.set(data_to_set)
 
 Using these methods will allow the commit to pass with the changes made by the script. It is recommended to provide some information to syslog in order to inform the user what changes occurred.
 
-#### Config Script Example
+### Config Script Example
 
 Let's take a look at an application of these techniques with a simple script. This specific program will check to see if a specified ACL is present on a given interface when any ACL-related configuration is pushed. 
 
