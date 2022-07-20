@@ -31,7 +31,7 @@ Automation scripts are one way to leverage IOS XR to work for you. These are mai
 ![Screen Shot 2022-07-15 at 2.07.09 PM.png]({{site.baseurl}}/images/Screen Shot 2022-07-15 at 2.07.09 PM.png)
 
 ### Using Syslog in Python Scripts
-All types of on-box python scripts have access to the logging capabilities of IOS XR. As script-writers, we can print [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information. The following example illustrates how you can leverage system logging within your scripts:
+All types of on-box python scripts have access to the logging capabilities of IOS XR. As script-writers, we can utilize [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information. The following example illustrates how you can leverage system logging within your scripts:
 
 <div class="highlighter-rouge">
 <pre class="highlight">
@@ -304,13 +304,13 @@ Finally, we iterate through the list of nodes to see if there is an ACL within t
 </pre>
 </div>
 
-Normal list iteration is effective for node lists, and we can access the `value` attribute of the nodes.
+Normal list iteration is effective for leaf-lists, and we can access the `value` attribute of the leaf nodes.
 
 I dissect this script in a video here:
 
 **VIDEOLINK**
 
-This script helped to illustrate some of the methods that config scripts utilize, but is limited in practicality. I created another sample config script that demonstrates more of the capabilites of config scripts. I discuss the guts of that script in this video:
+This script helped to illustrate some of the methods that config scripts utilize, but is limited in practicality. I created another sample config script that demonstrates more of the capabilites of config scripts. I discuss that script in this video:
 
 **VIDEOLINK**
   
