@@ -45,8 +45,6 @@ syslog = xrlog.getSysLogger('script-name')
 </pre>
 </div>
 
-![Exec Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-exec.png)
-
 ## Exec Scripts
 
 Exec scripts represent the most basic on-box scripting available within IOS XR. These scripts provide a way for the network managers to manually deploy programs that simplify their work as a whole, including automating the configuration process. In order to do this, we must leverage the `iosxr.xrcli.xrcli_helper` library. 
@@ -134,7 +132,6 @@ I also have a line-by-line breakdown of a more complex exec script available her
 
 **VIDEOLINK**
 
-![Config Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-config.png)
 
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
