@@ -45,7 +45,7 @@ syslog = xrlog.getSysLogger('script-name')
 </pre>
 </div>
 
-![Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-exec.png)
+![Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-script-exec.png)
 
 ## Exec Scripts
 
@@ -134,7 +134,7 @@ I also have a line-by-line breakdown of a more complex exec script available her
 
 **VIDEOLINK**
 
-![Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-config.png)
+![Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-script-config.png)
 
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
