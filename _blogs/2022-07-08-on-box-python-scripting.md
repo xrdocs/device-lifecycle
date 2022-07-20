@@ -28,7 +28,7 @@ Automation scripts are one way to leverage IOS XR to work for you. These are mai
 
 > Note: As of IOS XR release 7.5.1, EEM scripts are not supported
 
-![Screen Shot 2022-07-15 at 2.07.09 PM.png]({{site.baseurl}}/images/Screen Shot 2022-07-15 at 2.07.09 PM.png)
+![Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-scripts.png)
 
 ### Using Syslog in Python Scripts
 All types of on-box python scripts have access to the logging capabilities of IOS XR. As script-writers, we can utilize [all levels of syslog](https://www.cisco.com/c/en/us/td/docs/routers/access/wireless/software/guide/SysMsgLogging.html#wp1054858) information. The following example illustrates how you can leverage system logging within your scripts:
@@ -44,6 +44,8 @@ syslog = xrlog.getSysLogger('script-name')
 </code>
 </pre>
 </div>
+
+![Exec Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-exec.png)
 
 ## Exec Scripts
 
@@ -132,6 +134,7 @@ I also have a line-by-line breakdown of a more complex exec script available her
 
 **VIDEOLINK**
 
+![Config Scripts](https://xrdocs.github.io/xrdocs-images/assets/images/pickhardt-config.png)
 
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
@@ -333,7 +336,7 @@ This script helped to illustrate some of the methods that config scripts utilize
   
 ## Process Scripts
   
-Process scripts are the best way for a user to automatically monitor operational data within IOS XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
+Process scripts are the best way to automatically monitor operational data within IOS-XR. Since process scripts run continuously by nature, we must register them with AppMgr for them to run. Information about how to correctly set up process scripts can be found [here](https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/asr9k-r7-5/programmability/configuration/guide/b-programmability-cg-asr9000-75x/process-scripts.html). 
 
 Process scripts begin with a typical Python `if __name__ == "__main__":` statement. In this statement, there must be an infinite loop, which can call any necessary helper functions. Many process scripts also utilize the `time` library, which allows the script to wait for a number of seconds (or minutes) at the end of the script before running again. This is helpful in saving power, since script execution is suspended during this time. 
 
@@ -355,12 +358,14 @@ In order to find the correct piece of data, we should use a string representing 
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-&lt;container1 xmls="http:cisco.com/ns/yang/Cisco-IOS-XR-{namespace of YANG model}&gt;"
+"""
+&lt;container1 xmls="http:cisco.com/ns/yang/Cisco-IOS-XR-{namespace-of-YANG-model}"&gt;
     &lt;container2&gt;
         &lt;key-to-container2&gt;KeyData&lt;/key-to-container2&gt;
             &lt;leaf-name/&gt;
     &lt;/container2&gt;
 &lt;/container1&gt;
+"""
 </code>
 </pre>
 </div>
