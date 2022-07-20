@@ -17,7 +17,7 @@ Being a network engineer no longer requires poring over CLI commands for hours o
 ## Automation Scripts
 Automation scripts are one way to leverage IOS XR to work for you. These are mainly Python scripts that run on-box. These scripts can work in four different ways to aid the configuration and maintenance of your network. 
 
-[**Config scripts**](##exec-scripts): These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
+[**Config scripts**](#config-scripts): These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
 
 [**Exec Scripts**]: These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
 
