@@ -14,12 +14,13 @@ excerpt: Automation using python scripts
 ## Programmability of IOS XR  
 
 Being a network engineer no longer requires poring over CLI commands for hours on end, ensuring every detail conforms to the requirements, just for a link to break, causing even more work. Using the programmability capabilities of IOS XR, you eliminate much of the tedious router-by-router configuration by manipulating the existing data models automatically. There are many ways to tap into the automated potential of IOS XR, including ZTP, Automation Scripts, and gNMI.
+
 ## Automation Scripts
 Automation scripts are one way to leverage IOS XR to work for you. These are mainly Python scripts that run on-box. These scripts can work in four different ways to aid the configuration and maintenance of your network. 
 
-[**Config scripts**](#config-scripts): These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
-
 [**Exec Scripts**](#exec-scripts): These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
+
+[**Config scripts**](#config-scripts): These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
 
 [**Process Scripts**](#process-scripts): These scripts run continually once manually activated. They perform typical checks and will exit upon a preconfigured condition. They daemonize normal system monitoring.
 
@@ -135,12 +136,29 @@ I also have a line-by-line breakdown of a more complex exec script available her
 ## Config Scripts
 As mentioned, config scripts are the best way to ensure that a commit doesn’t violate any existing rules for the network. Each config script should be relatively specific in its use (ie, regarding one protocol). Breaking down the general form of these scripts will help us understand exactly how they work.
 
-#### `xr.register_validate_callback(path, callback_function)`
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+import cisco.config_validation as xr
+</code>
+</pre>
+</div>
 
+#### Registering the Callback Function on a Path
 
-This function is required to be called in each config script. 
+The `cisco.config-valiation` Python library contains a few functions that are critical to the operation of config scripts. The first of these methods has the following signature:
 
-The first argument to this function, `path`, determines when the config script should be run. The script should only be called when a commit related to the script is pushed in order to reduce power usage. The `path` is a YPath from the data model the script uses to check for valid configuration. Specifically, this argument needs to be a schema path, which is a YPath that doesn’t point to a specific instance of an item. This means that no keys in the path are specified. A schema path conforms to the following format:
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+xr.register_validate_callback(path, cb_fn)
+</code>
+</pre>
+</div>
+
+This function tells IOS-XR when to execute the script, and what callback fuction to run. A well-written config script will not be called after every configuration attempt, because configurations will not pertain to the script in any way. 
+
+The first argument, `path`, determines whether the configuration data relates to the validation occurring in the callback function, and is of the type `YPath`. Specifically, `path` is a schema path, which is a `YPath` that doesn’t point to a specific instance of a node. This means that no keys in the path are specified. A schema path conforms to the following format:
 
 <div class="highlighter-rouge">
 <pre class="highlight">
@@ -150,12 +168,24 @@ The first argument to this function, `path`, determines when the config script s
 </pre>
 </div>
 
+The most effective way to derive the correct YPath is to search for the intended data within pertinent YANG models. If there is more than one node that should trigger the config script, a wildcard can be used as follows:
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+"module-name:container/container2/another-module:container/*"
+</code>
+</pre>
+</div>
+
+This path will tell the script to execute when any leaf node under the last container is edited, created, or deleted.
 There are a number of limitations on the available models that can be used for config scripts. Only XR-native YANG models are supported (no UM, IETF, OC). Also, in order for the callback function to properly access the configuration data, the path needs to be from a “cfg” model, not an “oper” model. 
 
-The second argument to this method, `callback_function`, is what will be run whenever a relevant commit is pushed to the configuration.
+The second argument to this method, `callback_function`, is what will be run whenever a relevant commit is pushed to the configuration. The callback function is the “meat” of the config script. 
 
-#### `callback_function`
-The callback function is the “meat” of the config script. The signature of the function needs to be:
+#### The Callback Function
+
+The signature of the function needs to be:
 
 <div class="highlighter-rouge">
 <pre class="highlight">
@@ -168,31 +198,35 @@ def cb_fn_name(root):
 
 where `root` is the root node.
 
-This function retrieves specific nodes from the YANG model in order to check configuration status, including containers, leaves, and leaf-lists. In order to do this, we can use either the `<node>.get_node(path)` or `<node>.get_list(path)`. Intuitively, `get_node` can be used to get leaf or container nodes, while `get_list` should be used to obtain leaf-list types. For each of these methods, the path is a specific instance of a YPath, called a data path. Unlike the schema path mentioned in the previous section, the keys of the path must be included to find a specific node or list. A data path has the following signature: 
+This function retrieves specific nodes from the YANG model in order to check configuration status, including containers, leaves, and leaf-lists. In order to do this, we can use either the `<node>.get_node(path)` or `<node>.get_list(path)`. The first call of these functions should be called on the root node, which is passed to the callback function as an argument. Intuitively, `get_node` can be used to get leaf or container nodes, while `get_list` should be used to obtain leaf-list types. For each of these methods, the path is a specific instance of a YPath, called a data path. Unlike the schema path mentioned in the previous section, the keys of the path must be included to find a specific node or list. A data path matches the following skeleton: 
 
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-"module-name:container/container2<mark>[key='value']</mark>/another-module:container<mark>[key=number]</mark>/leaf"
+"module-name:container/container2<mark>[key='value']</mark>/another-module:container<mark>[id=number]</mark>/leaf"
 </code>
 </pre>
 </div>
 
 The only difference between the data and schema paths is that the required key-value pairs are specified in the data path, while a schema path excludes them.
 
+Key values should be surrounded by single quotes (key='value') except when the data type is an integer (id=number).
+
 If the node retrieved is a leaf node, you can use the `.value` attribute to retrieve the associated data. Meanwhile, leaf-lists can be iterated through to get the leaf nodes within them. 
 
-After the relevant data has been retrieved from the models, the necessary validation can occur. In this stage, you can send messages to the syslog, as well as having a few options to take with configurations that don’t comply with the desired standards. The first route to take is to generate warnings in the syslog.
+After the relevant data has been retrieved from the models, the necessary validation can occur. If the current configuration data doesn't comply with the script's standards, there are a few venues available to the script writer to correct the discrepancies. The first route to take is to generate warnings or errors in the syslog.
 
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-syslog.warning("Something is wrong!")
+syslog.error("Something is wrong!")
 </code>
 </pre>
 </div>
 
-Next, you can block the commit by generating errors from the xr library. This will also send a custom error message to the user. 
+This will allow the commit to pass, so this technique should be implemented when there is a minor problem with the configuration data. 
+
+Next, you can block the commit by generating errors from the `cisco.config_validation` library. This will also send a custom error message to the user. 
 
 <div class="highlighter-rouge">
 <pre class="highlight">
@@ -202,7 +236,9 @@ xr.add_error(curr_node, "Something is wrong! Can't commit changes")
 </pre>
 </div>
 
-Finally, you can change configuration data automatically using the `curr_node.set_node(path, data)` or `curr_node.set(data)` methods. The former allows you to set the data of the current node or any child node relative to the current node, while the latter works for the current node only. 
+This strategy should be employed when configuration doesn't match the desired values, but there is there is no obvious way to correct the problem.
+
+If there is a straightforward solution, you can change configuration data automatically using the `curr_node.set_node(path, data)` or `curr_node.set(data)` methods. The former allows you to set the data of the current node or any child node relative to the current node, while the latter works for the current node only. 
 
 <div class="highlighter-rouge">
 <pre class="highlight">
@@ -214,7 +250,7 @@ curr_node.set(data_to_set)
 </pre>
 </div>
 
-Using these methods will allow the commit to pass with the changes made by the script.
+Using these methods will allow the commit to pass with the changes made by the script. It is recommended to provide some information to syslog in order to inform the user what changes occurred.
 
 #### Config Script Example
 
