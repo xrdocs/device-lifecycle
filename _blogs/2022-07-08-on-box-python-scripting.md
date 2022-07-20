@@ -361,7 +361,9 @@ In order to find the correct piece of data, we should use a string representing 
             &lt;leaf-name/&gt;
     &lt;/container2&gt;
 &lt;/container1&gt;
-```
+</code>
+</pre>
+</div>
 
 where the leaf contains the data we wish to monitor/manipulate. This filter string should be passed to the `request` argument of the NETCONF function.
 
