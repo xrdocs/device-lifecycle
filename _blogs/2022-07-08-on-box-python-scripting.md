@@ -352,13 +352,15 @@ nc.close() #always close the netconf session when you are done
 
 In order to find the correct piece of data, we should use a string representing an XML filter. The structure of this string is:
 
-```py
-<container1 xmls="http:cisco.com/ns/yang/Cisco-IOS-XR-{namespace of YANG model}>"
-    <container2>
-        <key-to-container2>KeyData</key-to-container2>
-            <leaf-name/>
-    </container2>
-</container1>
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+&lt;container1 xmls="http:cisco.com/ns/yang/Cisco-IOS-XR-{namespace of YANG model}&gt;"
+    &lt;container2&gt;
+        &lt;key-to-container2&gt;KeyData&lt;/key-to-container2&gt;
+            &lt;leaf-name/&gt;
+    &lt;/container2&gt;
+&lt;/container1&gt;
 ```
 
 where the leaf contains the data we wish to monitor/manipulate. This filter string should be passed to the `request` argument of the NETCONF function.
