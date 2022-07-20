@@ -9,7 +9,7 @@ position: hidden
 author: Eliot Pickhardt
 excerpt: Automation using python scripts
 ---
-{% include toc %}
+{% include toc title="On-Box Scripting" %}
 
 ## Programmability of IOS XR  
 
