@@ -19,11 +19,11 @@ Automation scripts are one way to leverage IOS XR to work for you. These are mai
 
 [**Config scripts**](#config-scripts): These scripts run automatically every time a configuration change is committed. They are useful to ensure that a commit doesn’t go against any network rules, and can take action or throw errors if rules are broken.
 
-[**Exec Scripts**]: These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
+[**Exec Scripts**](#exec-scripts): These scripts are run manually, but they can dramatically decrease the work required for configuration or other operational tasks.
 
-[**Process Scripts**]: These scripts run continually once manually activated. They perform typical checks and will exit upon a preconfigured condition. They daemonize normal system monitoring.
+[**Process Scripts**](#process-scripts): These scripts run continually once manually activated. They perform typical checks and will exit upon a preconfigured condition. They daemonize normal system monitoring.
 
-[**EEM Scripts**]: These are event-driven scripts, and can be configured to run under a variety of conditions, such as a preconfigured timing interval or in response to a system condition. They operate similarly to Exec scripts in that they can aid in configuration or system maintenance. 
+[**EEM Scripts**](#eem-scripts): These are event-driven scripts, and can be configured to run under a variety of conditions, such as a preconfigured timing interval or in response to a system condition. They operate similarly to Exec scripts in that they can aid in configuration or system maintenance. 
 
 > Note: As of IOS XR release 7.5.1, EEM scripts are not supported
 
