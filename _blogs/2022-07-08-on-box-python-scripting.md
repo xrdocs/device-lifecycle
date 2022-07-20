@@ -256,7 +256,23 @@ Using these methods will allow the commit to pass with the changes made by the s
 
 Let's take a look at an application of these techniques with a simple script. This specific program will check to see if a specified ACL is present on a given interface when any ACL-related configuration is pushed. 
 
-With config scripts, it's most logical to start with the callback validation funciton, which for this example, uses two different models: an [interface-configuration](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ifmgr-cfg.yang) model along with a [pfilter](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ip-pfilter-cfg.yang) model. This function ensures that if a configuration is pushed that regards the ACL or any of the child nodes, this script will be called. 
+Here are the required import statements and instantiations:
+
+<div class="highlighter-rouge">
+<pre class="highlight">
+<code>
+import cisco.config_validation as xr
+
+from cisco.script_mgmt import xrlog
+syslog = xrlog.getSysLogger('check_acl')
+
+interface_name = "TenGigE0/0/0/10"
+acl_name = "access-list-1"
+</code>
+</pre>
+</div>
+
+With config scripts, it's most logical to start with the callback validation funciton, which for this example, uses two different models: an [interface-configuration](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ifmgr-cfg.yang) model along with a [pfilter](https://github.com/YangModels/yang/blob/af90c053a1ca9b01a3f229e313e4af7e5b849c87/vendor/cisco/xr/751/Cisco-IOS-XR-ip-pfilter-cfg.yang#L11) model. Notice that the pfilter model imports the interface configuration model, extending its reach. This function ensures that if a configuration is pushed that regards the ACL or any of the child nodes, this script will be called. 
 
 <div class="highlighter-rouge">
 <pre class="highlight">
