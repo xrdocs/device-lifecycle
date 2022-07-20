@@ -284,7 +284,7 @@ We then attempt to find the list of ACLs registered under this interface. As you
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-	acl = int_config.get_list("/ip-pfilter-cfg:ipv4-packet-filter/inbound/acl-name-array")
+acl = int_config.get_list("/ip-pfilter-cfg:ipv4-packet-filter/inbound/acl-name-array")
     if acl:
     	syslog.info("ACL list found")
 </code>
@@ -296,10 +296,10 @@ Finally, we iterate through the list of nodes to see if there is an ACL within t
 <div class="highlighter-rouge">
 <pre class="highlight">
 <code>
-		if acl_name in [x.value for x in acl]:
-			syslog.info("ACL found")
-		else:
-			syslog.error("ACL not found")
+	if acl_name in [x.value for x in acl]:
+		syslog.info("ACL found")
+    else:
+		syslog.error("ACL not found")
 </code>
 </pre>
 </div>
